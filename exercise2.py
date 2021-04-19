@@ -2,9 +2,9 @@ import numpy as np
 import pathgenerator as pathgen
 
 def riemann_sum_brownian_motion(inferior, superior, brownian_motion_paths):
-    """This funcion calculates the Riemann Sum of Brownion Motion using pseudo-randomly generated Brownian Paths.
+    """It calculates the Riemann Sum of Brownion Motion using pseudo-randomly generated Brownian Paths.
     inferior -- should be a real number representing the left boundary point of the integral.
-    superior -- real number representing the right boundary poin of the integral.
+    superior -- real number representing the right boundary point of the integral.
     brownian_motion_paths -- vectors of floats containing the points of pseudo Brownian Motion.
     """
     [number_of_paths, number_of_steps]=np.matrix.size(brownian_motion_paths)
@@ -26,14 +26,26 @@ def ito_integral_calculator( function_left_point, stochastic_paths):
         ito_sum=np.inner(function_left_point, brownian_motion_increments[i, :])+ito_sum    
     return ito_sum
 
+ def GeneratePathsBM(NoOfPaths,NoOfSteps,T):    
+    """
+        Method used to create paths of Brownian Motion until a given time.
+        T -- time at which the generation is stopped
+        NoOfPaths -- integer indicating the number of paths to generate
+        NoOfSteps -- integer indicating the number of intervals to consider between 0 and T 
+    """
+    # Fixing random seed
+    np.random.seed(1)
+    Z = np.random.normal(0.0,1.0,[NoOfPaths,NoOfSteps])
+    X = np.zeros([NoOfPaths, NoOfSteps+1])
+    time = np.zeros([NoOfSteps+1])
+    dt=T/float(NoOfSteps)
+    for i in range(0,NoOfSteps):
+        Z[:,i] = (Z[:,i] - np.mean(Z[:,i])) / np.std(Z[:,i]) #this makes 
+        X[:,i+1] = X[:,i] +  np.power(dt, 0.5)*Z[:,i]
+        time[i+1] = time[i] +dt
+    paths = {"time":time,"X":X}
+    return paths
 
-def main_calculation():
-    #[times, stochastic_paths]=pathgen.GeneratePathsBM(10^6, 10^6, 5)
-    try_out=pathgen.GeneratePathsBM(10^6, 10^6, 5)
-    return try_out
-
-  # riemann_integral=riemann_sum_brownian_motion(0,5, stochastic_paths)
-  #  ito_integral = ito_integral_calculator(np.ones((times.size,1,1))*5-times, stochastic_paths )
-   # print( ito_integral)
-main_calculation()
+if __name__ == '__main__':
+    main()
     

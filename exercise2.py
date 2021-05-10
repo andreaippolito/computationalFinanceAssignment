@@ -16,7 +16,7 @@ def riemann_sum_brownian_motion(brownian_motion_paths):
     """
 
     time_interval = (brownian_motion_paths.ending_point-brownian_motion_paths.starting_point) / \
-                    brownian_motion_paths.no_of_steps
+        brownian_motion_paths.no_of_steps
     riemann_sum = 0
     for i in range(0, brownian_motion_paths.no_of_paths):
         current_path = brownian_motion_paths.paths[i, :]
@@ -29,8 +29,6 @@ def ito_integral_calculator(brownian_motion_paths):
     It returns the approximation of the Ito integral given the values of the integrated function evaluated
     in the left point of each interval
     """
-    time_interval = (brownian_motion_paths.ending_point - brownian_motion_paths.starting_point) / \
-                    brownian_motion_paths.no_of_steps
     brownian_motion_increments = np.zeros((brownian_motion_paths.no_of_paths, brownian_motion_paths.no_of_steps))
     for i in range(0, brownian_motion_paths.no_of_steps):
         brownian_motion_increments[:, i] = brownian_motion_paths.paths[:, i+1] - brownian_motion_paths.paths[:, i]

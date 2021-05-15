@@ -1,18 +1,25 @@
 import numpy as np
 import brownian_paths as bp
+import matplotlib.pyplot as plt
 
 
 def main_calculation():
-    T = 10
-    brownian_paths = bp.BrownianPaths(2**14, 2**14, 0, T)
-    dt=brownian_paths.ending_point/float(brownian_paths.no_of_steps)
-    var_X = np.ones(brownian_paths.no_of_steps)
-    exact_solution=np.ones(brownian_paths.no_of_steps)
+    right_end_point = 10
+    brownian_paths = bp.BrownianPaths(2**10, 2**10, 0, right_end_point)
+    dt = brownian_paths.time_step
+    variance = np.ones(brownian_paths.no_of_steps+1)
+    exact_solution=np.ones(brownian_paths.no_of_steps+1)
     for i in range(0, brownian_paths.no_of_steps+1):
-        mean_t = np.sum(brownian_paths.paths[:, i])/brownian_paths.no_of_paths
-        standard_deviation_t = np.sqrt(sum(mean_t - brownian_paths.paths[:, i])/(brownian_paths.no_of_steps+1))
-        mean_T = np.sum(brownian_paths.paths[:, brownian_paths.no_of_steps-i])/brownian_paths.no_of_paths
-        standard_deviation_T = np.sqrt(sum(mean_T - brownian_paths.paths[:, brownian_paths.no_of_steps-i])/(brownian_paths.no_of_steps+1))
-        var_X[i] = standard_deviation_t - dt*i / T *standard_deviation_T
-        exact_solution [i] = dt*i+dt*i/T*(T-dt*i)-+2*dt*i/T*np.min(dt*i, T-dt*i)
-    error = exact_solution-var_X
+        variance[i] = np.std(brownian_paths.paths[:, i]-dt*i / right_end_point*brownian_paths.paths[:, brownian_paths.no_of_steps-i])**2
+        exact_solution[i] = dt*i+(dt*i/right_end_point)**2*(right_end_point-dt*i)-2*dt*i/right_end_point*np.minimum(dt*i, right_end_point-dt*i)
+    error = np.abs(exact_solution-variance)
+    x_axis = np.linspace(0, right_end_point, brownian_paths.no_of_steps+1)
+    plt.plot(x_axis, error)
+    plt.xlabel('t')
+    plt.ylabel('Error')
+    plt.show()
+
+
+if __name__ == '__main__':
+    main_calculation()
+
